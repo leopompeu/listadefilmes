@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0b0b0f;
+  --foreground: #ffffff;
+  --surface-0: #101018;
+  --surface-1: #141421;
+  --surface-2: #1a1a28;
+  --line-soft: #282a3f;
+  --line-strong: #3a3f57;
+  --nb-cta: #e50914;
+  --nb-cta-hover: #ff2e2e;
+  --meta: #a7adba;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(1100px 620px at 50% -20%, rgba(24, 30, 66, 0.38), transparent 62%),
+    linear-gradient(180deg, #07080f 0%, #0a0b12 100%);
+  color: var(--foreground);
+  font-family: "Inter", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button:hover:not(:disabled),
+button:focus-visible:not(:disabled),
+input[type="button"]:hover:not(:disabled),
+input[type="button"]:focus-visible:not(:disabled),
+input[type="submit"]:hover:not(:disabled),
+input[type="submit"]:focus-visible:not(:disabled),
+input[type="reset"]:hover:not(:disabled),
+input[type="reset"]:focus-visible:not(:disabled),
+[role="button"]:hover,
+[role="button"]:focus-visible {
+  cursor: pointer;
+}
+
+.text-slate-100,
+.text-slate-200,
+.text-slate-300 {
+  color: var(--meta) !important;
+}
+
+.brand-mark {
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--nb-cta);
+  text-transform: uppercase;
+  text-shadow: 0 0 14px rgba(229, 9, 20, 0.24);
+}
+
+.brand-sub {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--meta);
+  font-size: 0.72rem;
+}
+
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.brand-header-centered {
+  justify-content: center;
+}
+
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  display: block;
+  object-fit: contain;
+}
+
+.brand-logo-hero {
+  width: 56px;
+  height: 56px;
+}
+
+.brand-strip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .brand-strip {
+    display: none !important;
+  }
+}

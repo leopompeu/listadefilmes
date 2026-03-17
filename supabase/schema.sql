@@ -109,3 +109,58 @@ create index if not exists idx_movie_streaming_movie_id on public.movie_streamin
 insert into storage.buckets (id, name, public)
 values ('avatars', 'avatars', true)
 on conflict (id) do nothing;
+
+create table if not exists public.user_movie_interactions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.app_users (id) on delete cascade,
+  movie_id integer not null,
+  title text not null,
+  poster_path text,
+  release_date text,
+  vote_average numeric(3, 1),
+  watched boolean not null default false,
+  liked boolean not null default false,
+  rating numeric(2, 1),
+  comment varchar(500),
+  updated_at timestamptz not null default now(),
+  unique (user_id, movie_id),
+  constraint user_movie_interactions_rating_check
+    check (rating is null or (rating >= 0 and rating <= 5))
+);
+
+create index if not exists idx_user_movie_interactions_user_id
+on public.user_movie_interactions (user_id);
+
+create index if not exists idx_user_movie_interactions_movie_id
+on public.user_movie_interactions (movie_id);
+
+create index if not exists idx_user_movie_interactions_liked
+on public.user_movie_interactions (user_id, liked, updated_at desc);
+
+do $$
+begin
+  if exists (
+    select 1
+    from pg_constraint
+    where conname = 'user_movie_interactions_rating_check'
+  ) then
+    alter table public.user_movie_interactions
+      drop constraint user_movie_interactions_rating_check;
+  end if;
+end
+$$;
+
+alter table public.user_movie_interactions
+add constraint user_movie_interactions_rating_check
+check (
+  rating is null
+  or (
+    rating >= 0
+    and rating <= 5
+    and rating * 2 = trunc(rating * 2)
+  )
+);
+
+alter table public.user_movie_interactions
+alter column rating type numeric(2, 1)
+using rating::numeric(2, 1);

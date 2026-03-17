@@ -2,6 +2,7 @@
 
 import { FormEvent, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { PasswordField } from "@/components/password-field";
 
 type AuthMode = "login" | "cadastro";
 
@@ -14,6 +15,11 @@ export function AuthPanelClient() {
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [loadingAuth, setLoadingAuth] = useState(false);
   const [status, setStatus] = useState("");
+
+  const onModeChange = useCallback((mode: AuthMode) => {
+    setAuthMode(mode);
+    setStatus("");
+  }, []);
 
   const onAuthSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -88,11 +94,11 @@ export function AuthPanelClient() {
         </article>
 
         <article className="glass-panel p-6 md:p-8">
-          <div className="auth-switch inline-flex" data-mode={authMode}>
+          <div className="auth-switch" data-mode={authMode}>
             <button
               className="auth-tab"
               data-active={authMode === "login"}
-              onClick={() => setAuthMode("login")}
+              onClick={() => onModeChange("login")}
               type="button"
             >
               Login
@@ -100,7 +106,7 @@ export function AuthPanelClient() {
             <button
               className="auth-tab"
               data-active={authMode === "cadastro"}
-              onClick={() => setAuthMode("cadastro")}
+              onClick={() => onModeChange("cadastro")}
               type="button"
             >
               Cadastro
@@ -117,26 +123,25 @@ export function AuthPanelClient() {
               required
             />
 
-            <input
-              className="glass-input w-full"
+            <PasswordField
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Senha"
-              type="password"
               maxLength={72}
               required
+              autoComplete={authMode === "login" ? "current-password" : "new-password"}
             />
 
-            {authMode === "cadastro" ? (
-              <>
-                <input
-                  className="glass-input w-full"
+            <div className="auth-register-fields" data-open={authMode === "cadastro"}>
+              <div className="space-y-4">
+                <PasswordField
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   placeholder="Confirmar senha"
-                  type="password"
                   maxLength={72}
-                  required
+                  required={authMode === "cadastro"}
+                  disabled={authMode !== "cadastro"}
+                  autoComplete="new-password"
                 />
                 <label className="glass-input ui-file-upload block cursor-pointer text-sm">
                   Foto de perfil opcional (JPG, PNG, WEBP)
@@ -144,11 +149,12 @@ export function AuthPanelClient() {
                     type="file"
                     className="mt-2 block w-full text-xs"
                     accept="image/png,image/jpeg,image/webp"
+                    disabled={authMode !== "cadastro"}
                     onChange={(event) => setProfilePhoto(event.target.files?.[0] ?? null)}
                   />
                 </label>
-              </>
-            ) : null}
+              </div>
+            </div>
 
             <button className="liquid-button w-full" type="submit" disabled={loadingAuth}>
               {loadingAuth ? "Carregando..." : authMode === "login" ? "Entrar" : "Criar conta"}

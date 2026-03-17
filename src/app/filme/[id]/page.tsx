@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MovieInteractionsPanel } from "@/components/movie/movie-interactions-panel";
 import { StreamingSection } from "@/components/streaming-section";
+import { getCurrentSessionUser, getMovieInteractionsState } from "@/lib/server-app-data";
 import { getMovieDetails } from "@/lib/tmdb";
 
 type Params = {
@@ -57,6 +59,8 @@ export default async function MovieDetailsPage({ params }: Params) {
   const trailer = movie.videos.results.find(
     (video) => video.site === "YouTube" && video.type === "Trailer",
   );
+  const sessionUser = await getCurrentSessionUser();
+  const movieInteractions = await getMovieInteractionsState(movie.id, sessionUser?.id);
 
   return (
     <main className="min-h-screen px-4 py-8 md:px-10">
@@ -150,6 +154,15 @@ export default async function MovieDetailsPage({ params }: Params) {
             </div>
           </div>
 
+          <MovieInteractionsPanel
+            movieId={movie.id}
+            movieTitle={movie.title}
+            posterPath={movie.poster_path}
+            releaseDate={movie.release_date}
+            voteAverage={movie.vote_average}
+            canInteract={Boolean(sessionUser)}
+            initialState={movieInteractions}
+          />
           <StreamingSection movieId={movie.id} />
 
           <section className="mt-8">

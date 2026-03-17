@@ -1,0 +1,27 @@
+.gpu-layer {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 400px;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-layout {
+  contain: layout style;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -206,56 +206,58 @@ export function StreamingSection({ movieId }: Props) {
           <h3 className="text-base font-semibold text-white">Adicionar ou editar streaming</h3>
           <p className="mt-2 text-sm text-slate-200">Faca login para editar as fontes.</p>
         </div>
-      ) : showForm ? (
-        <div className="mt-5 glass-panel p-4">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="text-base font-semibold text-white">Adicionar ou editar streaming</h3>
-            <button
-              className="glass-secondary inline-flex h-7 w-7 items-center justify-center p-0 text-sm"
-              type="button"
-              onClick={() => setShowForm(false)}
-              aria-label="Fechar formulario"
-              title="Fechar"
-            >
-              ×
-            </button>
-          </div>
-          <form
-            className={`mt-3 grid gap-3 ${
-              provider === "piracy" ? "sm:grid-cols-[1fr_1.3fr_auto]" : "sm:grid-cols-[1fr_auto]"
-            }`}
-            onSubmit={onSubmit}
-          >
-            <div className="select-wrap">
-              <select
-                className="glass-input glass-select w-full"
-                value={provider}
-                onChange={(event) => setProvider(event.target.value as StreamingProviderId)}
+      ) : (
+        <div className="smooth-collapse mt-5" data-open={showForm}>
+          <div className="glass-panel p-4">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-base font-semibold text-white">Adicionar ou editar streaming</h3>
+              <button
+                className="glass-secondary inline-flex h-7 w-7 items-center justify-center p-0 text-sm"
+                type="button"
+                onClick={() => setShowForm(false)}
+                aria-label="Fechar formulario"
+                title="Fechar"
               >
-                {STREAMING_PROVIDERS.map((entry) => (
-                  <option key={entry.id} value={entry.id}>
-                    {entry.label}
-                  </option>
-                ))}
-              </select>
+                ×
+              </button>
             </div>
+            <form
+              className={`mt-3 grid gap-3 ${
+                provider === "piracy" ? "sm:grid-cols-[1fr_1.3fr_auto]" : "sm:grid-cols-[1fr_auto]"
+              }`}
+              onSubmit={onSubmit}
+            >
+              <div className="select-wrap">
+                <select
+                  className="glass-input glass-select w-full"
+                  value={provider}
+                  onChange={(event) => setProvider(event.target.value as StreamingProviderId)}
+                >
+                  {STREAMING_PROVIDERS.map((entry) => (
+                    <option key={entry.id} value={entry.id}>
+                      {entry.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {provider === "piracy" ? (
-              <input
-                className="glass-input w-full"
-                value={url}
-                onChange={(event) => setUrl(event.target.value)}
-                placeholder="Link obrigatorio para pirataria"
-              />
-            ) : null}
+              {provider === "piracy" ? (
+                <input
+                  className="glass-input w-full"
+                  value={url}
+                  onChange={(event) => setUrl(event.target.value)}
+                  placeholder="Link obrigatorio para pirataria"
+                />
+              ) : null}
 
-            <button className="liquid-button h-[46px] px-4 text-sm" type="submit" disabled={saving}>
-              {saving ? "Salvando..." : "Salvar"}
-            </button>
-          </form>
-          {status ? <p className="mt-2 text-xs text-slate-200">{status}</p> : null}
+              <button className="liquid-button h-[46px] px-4 text-sm" type="submit" disabled={saving}>
+                {saving ? "Salvando..." : "Salvar"}
+              </button>
+            </form>
+            {status ? <p className="mt-2 text-xs text-slate-200">{status}</p> : null}
+          </div>
         </div>
-      ) : null}
+      )}
 
       <ActionDialog
         open={Boolean(pendingRemoveProvider)}

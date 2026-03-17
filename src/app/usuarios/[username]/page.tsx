@@ -27,6 +27,20 @@ type ListItem = {
   vote_average: number | null;
 };
 
+type LikedMovie = {
+  movie_id: number;
+  title: string;
+  poster_path: string | null;
+  vote_average: number | null;
+  rating: number | null;
+  comment: string | null;
+};
+
+function posterUrl(path: string | null) {
+  if (!path) return "";
+  return `https://image.tmdb.org/t/p/w500${path}`;
+}
+
 export default async function OtherUserListPage({ params }: Params) {
   const { username } = await params;
   const usernameParam = normalizeUsername(username);
@@ -86,6 +100,12 @@ export default async function OtherUserListPage({ params }: Params) {
         .eq("list_id", activeListId)
         .order("added_at", { ascending: false })
     : { data: [] };
+  const { data: likedMovies } = await supabase
+    .from("user_movie_interactions")
+    .select("movie_id, title, poster_path, vote_average, rating, comment")
+    .eq("user_id", safeTargetUser.id)
+    .eq("liked", true)
+    .order("updated_at", { ascending: false });
 
   const myListState = await getUserListState(sessionUser.id);
 
@@ -131,6 +151,47 @@ export default async function OtherUserListPage({ params }: Params) {
           initialMyActiveListId={myListState.activeListId}
           initialMyListIds={myListState.items.map((item) => item.movie_id)}
         />
+
+        <section className="glass-panel mt-6 p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-semibold text-white">Filmes curtidos</h2>
+            <span className="text-xs text-slate-300">{(likedMovies ?? []).length} filme(s)</span>
+          </div>
+          {!likedMovies?.length ? (
+            <p className="mt-3 text-sm text-slate-200">Esse usuario ainda nao curtiu nenhum filme.</p>
+          ) : (
+            <div className="movie-grid mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {(likedMovies as LikedMovie[]).map((movie) => (
+                <article key={movie.movie_id} className="glass-tile flex h-full flex-col p-3">
+                  <div className="aspect-[2/3] overflow-hidden rounded-xl bg-black/30">
+                    {movie.poster_path ? (
+                      <img
+                        src={posterUrl(movie.poster_path)}
+                        alt={movie.title}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-sm text-slate-300">
+                        Sem imagem
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="mt-3 line-clamp-2 text-sm font-semibold text-white">{movie.title}</h3>
+                  <p className="mt-1 text-xs text-slate-300">
+                    Nota do usuario: {movie.rating ?? 0}/5 · TMDB: {movie.vote_average?.toFixed(1) ?? "-"}
+                  </p>
+                  {movie.comment ? <p className="mt-2 line-clamp-3 text-xs text-slate-200">{movie.comment}</p> : null}
+                  <Link
+                    href={`/filme/${movie.movie_id}`}
+                    className="glass-secondary mt-auto flex h-9 w-full items-center justify-center text-sm"
+                  >
+                    Ver detalhes
+                  </Link>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );

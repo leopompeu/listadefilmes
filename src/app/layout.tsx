@@ -24,6 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0"
+        />
+      </head>
       <body className={`${inter.className} antialiased`}>{children}</body>
     </html>
   );

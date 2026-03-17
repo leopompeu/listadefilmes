@@ -47,7 +47,7 @@ export default async function HomePage() {
         </section>
 
         <section className="glass-shell mb-6 hidden items-center px-4 py-3 md:grid md:grid-cols-[1fr_auto_1fr]">
-          <div className="flex items-center gap-3">
+          <Link href="/usuario" className="flex items-center gap-3">
             <div className="h-10 w-10 overflow-hidden rounded-full border border-white/35 bg-white/15">
               {user.photo_url ? (
                 <img src={user.photo_url} alt={`${user.username} avatar`} className="h-full w-full object-cover" />
@@ -61,7 +61,7 @@ export default async function HomePage() {
               <p className="text-[0.64rem] uppercase tracking-[0.18em] text-slate-300">perfil logado</p>
               <p className="truncate text-sm font-semibold text-white">{user.username}</p>
             </div>
-          </div>
+          </Link>
 
           <div className="brand-header brand-header-centered">
             <img src="/logo.svg" alt="Logo Caralho Flix" className="brand-logo" />
@@ -97,7 +97,7 @@ export default async function HomePage() {
         </aside>
 
         <section className="user-top-header md:hidden">
-          <div className="flex items-center gap-3">
+          <Link href="/usuario" className="flex items-center gap-3">
             <div className="user-top-avatar">
               {user.photo_url ? (
                 <img src={user.photo_url} alt={`${user.username} avatar`} className="h-full w-full object-cover" />
@@ -109,7 +109,7 @@ export default async function HomePage() {
               <p className="text-[0.66rem] uppercase tracking-[0.18em] text-slate-300">perfil logado</p>
               <p className="truncate text-lg font-semibold text-white">{user.username}</p>
             </div>
-          </div>
+          </Link>
           <LogoutButton className="glass-secondary h-10 px-4 text-sm" />
         </section>
 
@@ -121,11 +121,13 @@ export default async function HomePage() {
             initialLists={initialListState.lists}
             initialActiveListId={initialListState.activeListId}
           />
-          <ListManagerClient
-            initialItems={initialListState.items}
-            initialLists={initialListState.lists}
-            initialActiveListId={initialListState.activeListId}
-          />
+          <div className="hidden lg:block">
+            <ListManagerClient
+              initialItems={initialListState.items}
+              initialLists={initialListState.lists}
+              initialActiveListId={initialListState.activeListId}
+            />
+          </div>
         </section>
 
         <MobileBottomNav active="home" />
