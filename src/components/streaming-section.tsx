@@ -2,6 +2,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { ActionDialog } from "@/components/action-dialog";
 import { STREAMING_PROVIDERS, StreamingProviderId } from "@/lib/streaming";
 
 type SessionUser = {
@@ -31,6 +32,10 @@ export function StreamingSection({ movieId }: Props) {
   const [status, setStatus] = useState("");
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [pendingRemoveProvider, setPendingRemoveProvider] = useState<{
+    id: StreamingProviderId;
+    label: string;
+  } | null>(null);
 
   useEffect(() => {
     void loadSession();
@@ -179,7 +184,7 @@ export function StreamingSection({ movieId }: Props) {
                     className="absolute right-1 top-1 inline-flex h-6 w-6 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-[12px] leading-none text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.9)] transition hover:scale-110 disabled:cursor-not-allowed disabled:opacity-70"
                     type="button"
                     disabled={saving}
-                    onClick={() => void removeProvider(item.provider)}
+                    onClick={() => setPendingRemoveProvider({ id: item.provider, label: providerMeta.label })}
                     title={`Remover ${providerMeta.label}`}
                     aria-label={`Remover ${providerMeta.label}`}
                   >
@@ -251,6 +256,26 @@ export function StreamingSection({ movieId }: Props) {
           {status ? <p className="mt-2 text-xs text-slate-200">{status}</p> : null}
         </div>
       ) : null}
+
+      <ActionDialog
+        open={Boolean(pendingRemoveProvider)}
+        mode="confirm"
+        title="Remover streaming"
+        description={
+          pendingRemoveProvider
+            ? `Deseja remover ${pendingRemoveProvider.label} desta lista de streamings?`
+            : "Deseja remover este streaming?"
+        }
+        confirmText="Remover"
+        tone="danger"
+        onClose={() => setPendingRemoveProvider(null)}
+        onConfirm={() => {
+          if (!pendingRemoveProvider) return;
+          const providerId = pendingRemoveProvider.id;
+          setPendingRemoveProvider(null);
+          void removeProvider(providerId);
+        }}
+      />
     </section>
   );
 }

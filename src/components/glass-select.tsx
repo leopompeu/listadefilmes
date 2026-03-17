@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 
 type Option = {
   value: string;
@@ -14,7 +14,7 @@ type Props = {
   placeholder?: string;
 };
 
-export function GlassSelect({ value, options, onChange, placeholder }: Props) {
+export const GlassSelect = memo(function GlassSelect({ value, options, onChange, placeholder }: Props) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,7 +44,7 @@ export function GlassSelect({ value, options, onChange, placeholder }: Props) {
   }, []);
 
   return (
-    <div ref={rootRef} className="glass-select-root">
+    <div ref={rootRef} className="glass-select-root" data-open={open}>
       <button
         type="button"
         className="glass-input glass-select-trigger w-full"
@@ -52,7 +52,9 @@ export function GlassSelect({ value, options, onChange, placeholder }: Props) {
         onClick={() => setOpen((current) => !current)}
       >
         <span className="truncate">{selectedLabel}</span>
-        <span className="glass-select-chevron">⌄</span>
+        <span className="glass-select-chevron material-symbols-rounded" aria-hidden="true">
+          expand_more
+        </span>
       </button>
 
       <div className="glass-select-menu" data-open={open}>
@@ -75,4 +77,4 @@ export function GlassSelect({ value, options, onChange, placeholder }: Props) {
       </div>
     </div>
   );
-}
+});

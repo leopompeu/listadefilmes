@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { discoverMovies } from "@/lib/tmdb";
+import { addDirectorsToMovies, discoverMovies } from "@/lib/tmdb";
 
 export async function GET(request: Request) {
   try {
@@ -14,7 +14,8 @@ export async function GET(request: Request) {
       primaryReleaseYear: searchParams.get("year") ?? "",
       voteAverageGte: searchParams.get("minVote") ?? "",
     });
-    return NextResponse.json(data);
+    const results = await addDirectorsToMovies(data.results ?? []);
+    return NextResponse.json({ ...data, results });
   } catch {
     return NextResponse.json({ error: "Nao foi possivel carregar filmes." }, { status: 500 });
   }

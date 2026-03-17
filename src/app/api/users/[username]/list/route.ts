@@ -33,11 +33,33 @@ export async function GET(_: Request, { params }: Params) {
     return NextResponse.json({ error: "Usuario nao encontrado." }, { status: 404 });
   }
 
-  const { data: items, error } = await supabase
+  const { data: lists, error: listsError } = await supabase
+    .from("user_lists")
+    .select("id, name, created_at, updated_at")
+    .eq("user_id", targetUser.id)
+    .order("updated_at", { ascending: false });
+
+  if (listsError) {
+    return NextResponse.json(
+      { error: "Nao foi possivel carregar as listas do usuario." },
+      { status: 500 },
+    );
+  }
+
+  const requestedListId = new URL(_.url).searchParams.get("listId");
+  const activeListId =
+    requestedListId && lists?.some((list) => list.id === requestedListId)
+      ? requestedListId
+      : (lists?.[0]?.id ?? null);
+
+  const movieQuery = supabase
     .from("user_movies")
     .select("*")
     .eq("user_id", targetUser.id)
     .order("added_at", { ascending: false });
+  const { data: items, error } = activeListId
+    ? await movieQuery.eq("list_id", activeListId)
+    : await movieQuery;
 
   if (error) {
     return NextResponse.json(
@@ -48,6 +70,8 @@ export async function GET(_: Request, { params }: Params) {
 
   return NextResponse.json({
     user: { username: targetUser.username, photo_url: targetUser.photo_url },
+    lists: lists ?? [],
+    activeListId,
     items: items ?? [],
   });
 }

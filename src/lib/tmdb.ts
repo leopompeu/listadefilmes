@@ -8,6 +8,7 @@ export type TmdbMovie = {
   poster_path: string | null;
   release_date: string;
   vote_average: number;
+  director?: string | null;
 };
 
 export type TmdbMovieDetails = {
@@ -89,6 +90,14 @@ type TmdbPagedResponse = {
   results: TmdbMovie[];
 };
 
+type TmdbMovieCredits = {
+  crew: Array<{
+    name: string;
+    job: string;
+    department: string;
+  }>;
+};
+
 export async function discoverMovies(filters: DiscoverFilters) {
   const safePage = Number.isNaN(filters.page)
     ? 1
@@ -110,6 +119,26 @@ export async function discoverMovies(filters: DiscoverFilters) {
   }
 
   return tmdbFetch<TmdbPagedResponse>(`/discover/movie?${params.toString()}`);
+}
+
+async function getMovieDirector(movieId: number) {
+  try {
+    const safeId = Math.max(1, Math.trunc(movieId));
+    const credits = await tmdbFetch<TmdbMovieCredits>(`/movie/${safeId}/credits?language=pt-BR`);
+    const director = credits.crew.find((member) => member.job === "Director");
+    return director?.name ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function addDirectorsToMovies(movies: TmdbMovie[]) {
+  return Promise.all(
+    movies.map(async (movie) => ({
+      ...movie,
+      director: await getMovieDirector(movie.id),
+    })),
+  );
 }
 
 export async function searchMovies(query: string, page: number) {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { searchMovies } from "@/lib/tmdb";
+import { addDirectorsToMovies, searchMovies } from "@/lib/tmdb";
 
 export async function GET(request: Request) {
   try {
@@ -12,7 +12,8 @@ export async function GET(request: Request) {
     }
 
     const data = await searchMovies(query, page);
-    return NextResponse.json(data);
+    const results = await addDirectorsToMovies(data.results ?? []);
+    return NextResponse.json({ ...data, results });
   } catch {
     return NextResponse.json({ error: "Nao foi possivel buscar filmes." }, { status: 500 });
   }
