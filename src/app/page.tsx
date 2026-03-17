@@ -13,14 +13,8 @@ export default async function HomePage() {
 
   if (!user) {
     return (
-      <main className="min-h-screen px-3 py-6 pb-28 sm:px-4 md:px-10 md:py-8 md:pb-8">
+      <main className="min-h-screen px-2 py-6 pb-28 sm:px-4 md:px-10 md:py-8 md:pb-8">
         <div className="mx-auto w-full max-w-7xl">
-          <section className="brand-strip mb-1 md:hidden">
-            <div className="brand-header brand-header-centered">
-              <img src="/logo.svg" alt="Logo Caralho Flix" className="brand-logo brand-logo-hero" />
-              <h1 className="brand-mark text-3xl md:text-5xl">CARALHO FLIX</h1>
-            </div>
-          </section>
           <AuthPanelClient />
         </div>
       </main>

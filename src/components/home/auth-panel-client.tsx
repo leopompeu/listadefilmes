@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useCallback, useState } from "react";
+import { CSSProperties, FormEvent, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { PasswordField } from "@/components/password-field";
 
 type AuthMode = "login" | "cadastro";
@@ -76,24 +77,47 @@ export function AuthPanelClient() {
 
   return (
     <section className="space-y-6">
-      <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
-        <article className="glass-panel p-6 md:p-8">
+      <section className="auth-brand-strip">
+        <div className="brand-header brand-header-centered">
+          <Image src="/logo.svg" alt="Logo Caralho Flix" className="brand-logo brand-logo-hero" width={56} height={56} />
+          <h1 className="brand-mark text-3xl md:text-5xl">CARALHO FLIX</h1>
+        </div>
+      </section>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(360px,1fr)]">
+        <article className="glass-panel px-4 py-5 sm:p-6 md:p-8">
           <p className="ui-accent-pill px-3 py-1 text-xs font-black uppercase tracking-[0.14em]">
             0 to 1 list
           </p>
           <h2 className="mt-4 text-3xl font-black uppercase leading-tight text-white md:text-5xl">
-            Track movies.
-            <br />
-            Share taste.
-            <br />
-            Build your vibe.
+            <span
+              className="typing-line"
+              style={{ "--typing-steps": 18, "--typing-delay": "0s" } as CSSProperties}
+            >
+              <span className="typing-line-mask">Organize filmes.</span>
+              <span className="typing-line-buffer">Organize filmes.</span>
+            </span>
+            <span
+              className="typing-line"
+              style={{ "--typing-steps": 20, "--typing-delay": "1.3s" } as CSSProperties}
+            >
+              <span className="typing-line-mask">Compartilhe gosto.</span>
+              <span className="typing-line-buffer">Compartilhe gosto.</span>
+            </span>
+            <span
+              className="typing-line"
+              style={{ "--typing-steps": 23, "--typing-delay": "2.8s" } as CSSProperties}
+            >
+              <span className="typing-line-mask">Monte sua vibe.</span>
+              <span className="typing-line-buffer">Monte sua vibe.</span>
+            </span>
           </h2>
           <p className="mt-4 max-w-xl text-sm text-slate-100 md:text-base">
-            Login, discover movies, and grow your personal list in seconds.
+            Faça login, descubra filmes e aumente sua lista pessoal em segundos.
           </p>
         </article>
 
-        <article className="glass-panel p-6 md:p-8">
+        <article className="glass-panel px-4 py-5 sm:p-6 md:p-8">
           <div className="auth-switch" data-mode={authMode}>
             <button
               className="auth-tab"
